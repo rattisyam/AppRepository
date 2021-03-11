@@ -1,20 +1,22 @@
 {
-  "name": "nodejs-hello-world",
-  "version": "1.0.0",
-  "description": "Hello World sample app",
-  "main": "index.js",
+  "name": "myapp",
+  "version": "0.0.1",
+  "private": true,
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm install inherits && mocha"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fhinkel/nodejs-hello-world.git"
+  "engines": {
+    "node": "^4.6.1"
   },
-  "author": "fhinkel",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/fhinkel/nodejs-hello-world/issues"
+  "dependencies": {
+    "express": "^4.14.0",
+    "http-errors": "^1.7.0",
+    "mysql": "^2.10.2"
   },
-  "homepage": "https://github.com/fhinkel/nodejs-hello-world#readme"
+  "devDependencies": {
+    "inherits": "^2.0.3",
+    "mocha": "^5.2.0",
+    "ms": "^2.1.1"
+  }
 }
