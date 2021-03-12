@@ -1,19 +1,26 @@
 node {
-   def commit_id
-   stage('Preparation') {
+   
+   stage('Git Checkout') {
      checkout scm
-     sh "git rev-parse --short HEAD > .git/commit-id"                        
-     commit_id = readFile('.git/commit-id').trim()
+    
    }
-   stage('test') {
+   stage('Build') {
      nodejs(nodeJSInstallationName: 'nodejs') {
-       sh 'npm install --only=dev'
+       sh 'npm install'
+       
+     }
+   }
+    stage('Test') {
+     nodejs(nodeJSInstallationName: 'nodejs') {
+      
        sh 'npm test'
      }
    }
    stage('docker build/push') {
-     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-       def app = docker.build("wardviaene/docker-nodejs-demo:${commit_id}", '.').push()
+        def dockerobject = docker.build "onboard.azurecr.io/gitopsNJS:latest"
+        
+        docker.withRegistry( "https://onboard.azurecr.io/gitopsNJS", "gitopsacr" ) {
+        dockerobject.push())
      }
    }
 }
