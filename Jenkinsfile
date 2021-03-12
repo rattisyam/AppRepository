@@ -5,16 +5,14 @@ node {
     
    }
    stage('Build') {
-     nodejs(nodeJSInstallationName: 'nodejs') {
+     
        sh 'npm install'
        
-     }
-   }
+    }
     stage('Test') {
-     nodejs(nodeJSInstallationName: 'nodejs') {
-      
+     
        sh 'npm test'
-     }
+     
    }
    stage('Docker Image') {
         def dockerobject = docker.build "onboard.azurecr.io/gitopsNJS:latest"
