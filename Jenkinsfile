@@ -15,9 +15,9 @@ node {
      
    }
    stage('Docker Image') {
-        def dockerobject = docker.build "onboard.azurecr.io/gitopsNJS:latest"
+        def dockerobject = docker.build "onboard.azurecr.io/gitopsnjs:latest"
         
-        docker.withRegistry( "https://onboard.azurecr.io/gitopsNJS", "gitopsacr" ) {
+        docker.withRegistry( "onboard.azurecr.io/gitopsnjs:latest", "gitopsacr" ) {
         dockerobject.push()
      }
    }
