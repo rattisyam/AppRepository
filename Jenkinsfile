@@ -25,6 +25,6 @@ node {
       git branch: 'master',  credentialsId:"af539a9b-b67e-41d7-9179-5519fee65c6d" , url: "https://github.com/rattisyam/GitOpsRepo.git"
    }
    stage('Update Image tag'){
-      sh "yq e 'image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/nodejs/values.yaml  &&git commit -am 'updated tag' &&git push origin master"
+      sh "pwd && yq e 'image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/nodejs/values.yaml  &&git commit -am 'updated tag' &&git push origin master"
    }
 }
