@@ -26,7 +26,7 @@ node {
                     script {
                         env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
                     }
-                    sh 'git clone https://${USER}:${encodedPass}@github.com/rattisyam/GitOpsRepo.git master'
+                    sh 'rm -rf master && git clone https://${USER}:${encodedPass}@github.com/rattisyam/GitOpsRepo.git master'
                     sh "yq e '.image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/master/nodejs/values.yaml"                    
                     sh 'git commit -am "updated tag" '
                     sh 'git push'
