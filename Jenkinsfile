@@ -21,4 +21,10 @@ node {
         //dockerobject.push()
      }
    }
+   stage('Clone GitOps repo'){
+      git branch: 'master',  credentialsId:"af539a9b-b67e-41d7-9179-5519fee65c6d" , url: "https://github.com/rattisyam/GitOpsRepo.git"
+   }
+   stage('Update Image tag'){
+      sh "yq write -i nodejs/values.yaml image.tag 1.${env.BUILD_NUMBER} && git commit -am 'updated tag' && git push origin master"
+   }
 }
