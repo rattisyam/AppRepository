@@ -22,7 +22,7 @@ node {
      }
    }
    stage('Update GitOps Dev'){
-      withCredentials([usernamePassword(credentialsId: af539a9b-b67e-41d7-9179-5519fee65c6d, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+      withCredentials([usernamePassword(credentialsId: 'af539a9b-b67e-41d7-9179-5519fee65c6d', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     script {
                         env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
                     }
