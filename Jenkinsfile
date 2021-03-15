@@ -30,7 +30,7 @@ node {
                     sh "yq e '.image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/master/nodejs/values.yaml"
                     sh "git add ."
                     sh 'git commit -m "updated tag" '
-                    sh 'git push'
+                    sh 'git push origin master'
                 } 
       //git branch: 'master',  credentialsId:"af539a9b-b67e-41d7-9179-5519fee65c6d" , url: "https://github.com/rattisyam/GitOpsRepo.git"
    }
