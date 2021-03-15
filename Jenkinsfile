@@ -21,10 +21,19 @@ node {
         //dockerobject.push()
      }
    }
-   stage('Clone GitOps repo'){
-      git branch: 'master',  credentialsId:"af539a9b-b67e-41d7-9179-5519fee65c6d" , url: "https://github.com/rattisyam/GitOpsRepo.git"
+   stage('Update GitOps Dev'){
+      withCredentials([usernamePassword(credentialsId: af539a9b-b67e-41d7-9179-5519fee65c6d, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    script {
+                        env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
+                    }
+                    sh 'git clone https://${USER}:${encodedPass}@github.com/rattisyam/GitOpsRepo.git master'
+                    sh "yq e '.image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/nodejs/values.yaml"                    
+                    sh 'git commit -am "updated tag" '
+                    sh 'git push'
+                } 
+      //git branch: 'master',  credentialsId:"af539a9b-b67e-41d7-9179-5519fee65c6d" , url: "https://github.com/rattisyam/GitOpsRepo.git"
    }
-   stage('Update Image tag'){
-      sh "yq e '.image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/nodejs/values.yaml  && git commit -am 'updated tag' && git push origin master"
-   }
+  // stage('Update Image tag'){
+  //    sh "yq e '.image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/nodejs/values.yaml  && git commit -am 'updated tag' && git push origin master"
+  // }
 }
