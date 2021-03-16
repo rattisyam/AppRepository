@@ -27,7 +27,7 @@ node {
                         env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
                     }
                     sh 'rm -rf master && git clone https://${USER}:${encodedPass}@github.com/rattisyam/GitOpsRepo.git master'
-                    sh "cd master && yq e '.image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/master/nodejs/values.yaml && git add . && git commit -m 'updated tag' && git push origin master"
+                    sh "cd master && yq e '.image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/master/nodejs/values.dev.yaml && git add . && git commit -m 'updated tag' && git push origin master"
                     //sh "git add ."
                     //sh 'git commit -m "updated tag" '
                     //sh 'cd master && git push origin master'
