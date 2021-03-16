@@ -18,7 +18,7 @@ node {
         def dockerobject = docker.build "onboard.azurecr.io/gitopsnjs:1."+env.BUILD_NUMBER
         
         docker.withRegistry( "https://onboard.azurecr.io/gitopsnjs:1."+env.BUILD_NUMBER, "gitopsacr" ) {
-        //dockerobject.push()
+        dockerobject.push()
      }
    }
    stage('Update GitOps Dev'){
