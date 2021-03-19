@@ -44,13 +44,13 @@ node {
                     script {
                         env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
                     }
-                    sh 'rm -rf AppRepository && git clone --branch dev https://${USER}:${encodedPass}@github.com/rattisyam/AppRepository.git AppRepository'
+                    sh 'rm -rf AppRepository && git clone --branch master https://${USER}:${encodedPass}@github.com/rattisyam/AppRepository.git AppRepository'
                    
       }
 	 withCredentials([usernamePassword(credentialsId: 'gittoken', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                    
 				    
-                    sh "cd AppRepository && echo ${PASS} > token && gh auth login --with-token < token && gh pr create --base stage --head dev --fill"
+                    sh "cd AppRepository && echo ${PASS} > token && gh auth login --with-token < token && gh pr create --base stage --head master --fill"
 			}
                     
                     
