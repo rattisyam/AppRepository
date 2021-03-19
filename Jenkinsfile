@@ -37,4 +37,22 @@ node {
   // stage('Update Image tag'){
   //    sh "yq e '.image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/nodejs/values.yaml  && git commit -am 'updated tag' && git push origin master"
   // }
+   
+  stage('Create a PR'){
+       
+      withCredentials([usernamePassword(credentialsId: 'af539a9b-b67e-41d7-9179-5519fee65c6d', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    script {
+                        env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
+                    }
+                    sh 'rm -rf AppRepository && git clone --branch dev https://${USER}:${encodedPass}@github.com/rattisyam/AppRepository.git AppRepository'
+                   
+      }
+	 withCredentials([usernamePassword(credentialsId: 'gittoken', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                   
+				    
+                    sh "cd AppRepository && echo ${PASS} > token && gh auth login --with-token < token && gh pr create --base stage --head dev --fill"
+			}
+                    
+                    
+    } 
 }
