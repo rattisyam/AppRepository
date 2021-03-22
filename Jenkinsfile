@@ -53,8 +53,8 @@ node {
                     sh "cd AppRepository && echo ${PASS} > token && gh auth login --with-token < token && gh pr create --base stage --head dev --fill"
 			}
 	  slackSend color: '#00FF00', message: 'SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}'
-	  slackSend color: '#BADA55', message: 'Created New Pull Request For Stage ${ghprbPullId} ${env.BUILD_URL}'               
-                    
+	  slackSend color: '#BADA55', message: 'Created New Pull Request For Stage '               
+           //${ghprbPullId} ${env.BUILD_URL}         
     } 
 	
 
