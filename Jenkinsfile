@@ -28,9 +28,9 @@ node {
                     }
                     sh 'rm -rf master && git clone https://${USER}:${encodedPass}@github.com/rattisyam/GitOpsRepo.git master'
                     sh "cd master && yq e '.image.tag = 1.${env.BUILD_NUMBER}' -i ${WORKSPACE}/master/nodejs/values.dev.yaml && git add . && git commit -m 'updated tag' && git push origin master"
-                    //sh "git add ."
-                    //sh 'git commit -m "updated tag" '
-                    //sh 'cd master && git push origin master'
+                    //slackSend color: '#00FF00', message: 'SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' '${env.BUILD_URL}'
+	           slackSend color: '#00FF00', message: "Build ${env.BUILD_NUMBER} completed for ${env.JOB_NAME}.  Details: (<${env.BUILD_URL} | here >)"
+	            
                 } 
       //git branch: 'master',  credentialsId:"af539a9b-b67e-41d7-9179-5519fee65c6d" , url: "https://github.com/rattisyam/GitOpsRepo.git"
    }
@@ -52,7 +52,7 @@ node {
 				    
                     sh "cd AppRepository && echo ${PASS} > token && gh auth login --with-token < token && gh pr create --base stage --head dev --fill"
 			}
-	  slackSend color: '#00FF00', message: 'SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL}'
+	  
 	  slackSend color: '#BADA55', message: 'Created New Pull Request For Stage '               
            //${ghprbPullId} ${env.BUILD_URL}         
     } 
