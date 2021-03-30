@@ -21,15 +21,33 @@ jobs:
       id: image-tag
       run: |
         echo "::set-output name=tag::$(git rev-parse --short HEAD)"
-    - name: build and push docker image
-      uses: elgohr/Publish-Docker-Github-Action@master
+    - name: dev - build and push docker image
+      if: ${{ github.ref == 'refs/heads/master' }}
+      uses: elgohr/Publish-Docker-Github-Action@master      
       with:
         name: onboard.azurecr.io/gitopsnjs
         registry: onboard.azurecr.io
         username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_TOKEN }}
+        password: ${{ secrets.ACR_TOKEN }}       
         tags: "${{steps.image-tag.outputs.tag}}"
-        
+    - name: dev - build and push docker image
+      if: ${{ github.ref == 'refs/heads/dev' }}
+      uses: elgohr/Publish-Docker-Github-Action@master      
+      with:
+        name: onboard.azurecr.io/gitopsnjs
+        registry: onboard.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_TOKEN }}       
+        tags: "d-${{steps.image-tag.outputs.tag}}"
+    - name: dev - build and push docker image
+      if: ${{ github.ref == 'refs/heads/stage' }}
+      uses: elgohr/Publish-Docker-Github-Action@master      
+      with:
+        name: onboard.azurecr.io/gitopsnjs
+        registry: onboard.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_TOKEN }}       
+        tags: "s-${{steps.image-tag.outputs.tag}}"        
     - name: Sending Slack Notification
       uses: rtCamp/action-slack-notify@v2
       with:
