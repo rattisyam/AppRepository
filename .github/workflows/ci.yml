@@ -49,15 +49,32 @@ jobs:
         registry: onboard.azurecr.io
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_TOKEN }}       
-        tags: "s-${{steps.image-tag.outputs.tag}}"        
-    - name: Sending Slack Notification
+        tags: "s-${{steps.image-tag.outputs.tag}}"
+    - name: stage-pr-merge
+      if: github.event.pull_request.merged && github.ref == 'refs/heads/stage'
       uses: rtCamp/action-slack-notify@v2
       with:
-        status: ${{ job.status }}
+        status: "stage-pr-merged"
       env:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         SLACK_CHANNEL: devops
-      if: always()
+    - name: master-pr-merge
+      if: github.event.pull_request.merged && github.ref == 'refs/heads/master'
+      uses: rtCamp/action-slack-notify@v2
+      with:
+        status: "master-pr-merged"
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_CHANNEL: devops
+      
+    #- name: Sending Slack Notification
+     # uses: rtCamp/action-slack-notify@v2
+      #with:
+        #status: ${{ job.status }}
+      #env:
+        #SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        #SLACK_CHANNEL: devops
+      #if: always()
       
         
   
