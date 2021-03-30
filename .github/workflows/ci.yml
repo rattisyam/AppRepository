@@ -25,7 +25,7 @@ jobs:
         echo "::set-output name=tag::$(git rev-parse --short HEAD)"
     - name: master - build and push docker image
       if: ${{ github.ref == 'refs/heads/master' }}
-      uses: elgohr/Publish-Docker-Github-Action@master      
+      #uses: elgohr/Publish-Docker-Github-Action@master      
       with:
         name: onboard.azurecr.io/gitopsnjs
         registry: onboard.azurecr.io
@@ -69,12 +69,12 @@ jobs:
       
     - name: Sending Slack Notification
       uses: rtCamp/action-slack-notify@v2
-      with:
-        status: ${{ job.status }}
+      #with:
+        #status: ${{ job.status }}
       env:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         SLACK_CHANNEL: devops
-      if: always()
+      if: success()
       
         
   
