@@ -6,6 +6,8 @@ on:
   push:
     branches:
     - master
+    - dev
+    - stage
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,7 +23,7 @@ jobs:
       id: image-tag
       run: |
         echo "::set-output name=tag::$(git rev-parse --short HEAD)"
-    - name: dev - build and push docker image
+    - name: master - build and push docker image
       if: ${{ github.ref == 'refs/heads/master' }}
       uses: elgohr/Publish-Docker-Github-Action@master      
       with:
@@ -39,7 +41,7 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_TOKEN }}       
         tags: "d-${{steps.image-tag.outputs.tag}}"
-    - name: dev - build and push docker image
+    - name: stage - build and push docker image
       if: ${{ github.ref == 'refs/heads/stage' }}
       uses: elgohr/Publish-Docker-Github-Action@master      
       with:
