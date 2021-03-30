@@ -30,3 +30,14 @@ jobs:
         password: ${{ secrets.ACR_TOKEN }}
         tags: "${{steps.image-tag.outputs.tag}}"
         
+    - name: Sending Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      with:
+        status: ${{ job.status }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_CHANNEL: devops
+      if: always()
+      
+        
+  
