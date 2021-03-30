@@ -51,7 +51,7 @@ jobs:
         password: ${{ secrets.ACR_TOKEN }}       
         tags: "s-${{steps.image-tag.outputs.tag}}"
     - name: stage-pr-merge
-      if: github.event.pull_request.merged && github.ref == 'refs/heads/stage'
+      if: github.event.pull_request.merged == 'true' && github.ref == 'refs/heads/stage'
       uses: rtCamp/action-slack-notify@v2
       with:
         status: "stage-pr-merged"
@@ -59,7 +59,7 @@ jobs:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         SLACK_CHANNEL: devops
     - name: master-pr-merge
-      if: github.event.pull_request.merged && github.ref == 'refs/heads/master'
+      if: github.event.pull_request.merged == 'true' && github.ref == 'refs/heads/master'
       uses: rtCamp/action-slack-notify@v2
       with:
         status: "master-pr-merged"
