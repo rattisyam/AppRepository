@@ -5,7 +5,7 @@ name: Build a branch on commit
 on:
   push:
     branches:
-    - master
+    - dev
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,5 +28,5 @@ jobs:
         registry: onboard.azurecr.io
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_TOKEN }}
-        tags: "${{steps.image-tag.outputs.tag}}"
+        tags: "d-${{steps.image-tag.outputs.tag}}"
         
