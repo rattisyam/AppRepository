@@ -58,7 +58,7 @@ jobs:
       env:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         SLACK_CHANNEL: devops
-    - name: stage-pr-merge
+    - name: master-pr-merge
       if: github.event.pull_request.merged && github.ref == 'refs/heads/master'
       uses: rtCamp/action-slack-notify@v2
       with:
