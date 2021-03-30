@@ -10,9 +10,8 @@ on:
     - stage
   pull_request:
     branches:
-    - master
     - dev
-    - stage
+    #- stage
     
 jobs:
   build:
@@ -62,6 +61,8 @@ jobs:
       id: open-pr
       with:
         destination_branch: "stage"
+        source_branch: "dev"
+        #pr_title: "Pulling ${{ github.ref }} into stage"
         github_token: ${{ secrets.GIT_TOKEN }}
         
     - name: output-url
