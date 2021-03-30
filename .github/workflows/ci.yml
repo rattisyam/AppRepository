@@ -9,6 +9,8 @@ on:
     - dev
     - stage
 jobs:
+   
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -49,7 +51,10 @@ jobs:
         registry: onboard.azurecr.io
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_TOKEN }}       
-        tags: "s-${{steps.image-tag.outputs.tag}}"        
+        tags: "s-${{steps.image-tag.outputs.tag}}"
+    - name: stage-pr-merge
+      if: github.event.pull_request.merged && github.ref == 'refs/heads/stage'
+      
     - name: Sending Slack Notification
       uses: rtCamp/action-slack-notify@v2
       with:
