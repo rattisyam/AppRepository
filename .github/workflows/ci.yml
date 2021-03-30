@@ -62,6 +62,8 @@ jobs:
       id: open-pr
       with:
         destination_branch: "stage"
+        github_token: ${{ secrets.GIT_TOKEN }}
+        
     - name: output-url
       run: echo ${{steps.open-pr.outputs.pr_url}}
     - name: output-number
