@@ -8,10 +8,10 @@ on:
     - master
     - dev
     - stage
-  pull_request:
-    branches:
-    - dev
-    #- stage
+  #pull_request:
+  #  branches:
+  #  - dev
+  #  - stage
     
 jobs:
   build:
