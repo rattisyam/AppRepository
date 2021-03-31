@@ -14,89 +14,82 @@ on:
   #  - stage
     
 jobs:
-  job1:
-     runs-on: ubuntu-latest
-     steps:
-     - uses: actions/checkout@v2
-     - name: Use Node.js ${{ matrix.node-version }}
-       uses: actions/setup-node@v1
-       with:
-         node-version: ${{ matrix.node-version }}
-     - run: npm install
-     - run: npm test
-     - name: Get tag
-       id: image-tag
-       run: |
-           echo "::set-output name=tag::$(git rev-parse --short HEAD)"
-  job2:
-     runs-on: ubuntu-latest
-     steps:
-      - name: master - build and push docker image
-        if: ${{ github.ref == 'refs/heads/master' }}
-        uses: elgohr/Publish-Docker-Github-Action@master      
-        with:
-         name: onboard.azurecr.io/gitopsnjs
-         registry: onboard.azurecr.io
-         username: ${{ secrets.ACR_USERNAME }}
-         password: ${{ secrets.ACR_TOKEN }}       
-         tags: "${{steps.image-tag.outputs.tag}}"
-  job3:
-     runs-on: ubuntu-latest
-     steps:
-      - name: dev - build and push docker image
-        if: ${{ github.ref == 'refs/heads/dev' }}
-        uses: elgohr/Publish-Docker-Github-Action@master      
-        with:
-         name: onboard.azurecr.io/gitopsnjs
-         registry: onboard.azurecr.io
-         username: ${{ secrets.ACR_USERNAME }}
-         password: ${{ secrets.ACR_TOKEN }}       
-         tags: "d-${{steps.image-tag.outputs.tag}}"
-   # - name: stage - build and push docker image
-    #  if: ${{ github.ref == 'refs/heads/stage' }}
-     # uses: elgohr/Publish-Docker-Github-Action@master      
-     # with:
-       # name: onboard.azurecr.io/gitopsnjs
-       # registry: onboard.azurecr.io
-        #username: ${{ secrets.ACR_USERNAME }}
-       # password: ${{ secrets.ACR_TOKEN }}       
-       # tags: "s-${{steps.image-tag.outputs.tag}}"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm test
+    - name: Get tag
+      id: image-tag
+      run: |
+        echo "::set-output name=tag::$(git rev-parse --short HEAD)"
+    - name: master - build and push docker image
+      if: ${{ github.ref == 'refs/heads/master' }}
+      uses: elgohr/Publish-Docker-Github-Action@master      
+      with:
+        name: onboard.azurecr.io/gitopsnjs
+        registry: onboard.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_TOKEN }}       
+        tags: "${{steps.image-tag.outputs.tag}}"
+    - name: dev - build and push docker image
+      if: ${{ github.ref == 'refs/heads/dev' }}
+      uses: elgohr/Publish-Docker-Github-Action@master      
+      with:
+        name: onboard.azurecr.io/gitopsnjs
+        registry: onboard.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_TOKEN }}       
+        tags: "d-${{steps.image-tag.outputs.tag}}"
+    - name: stage - build and push docker image
+      if: ${{ github.ref == 'refs/heads/stage' }}
+      uses: elgohr/Publish-Docker-Github-Action@master      
+      with:
+        name: onboard.azurecr.io/gitopsnjs
+        registry: onboard.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_TOKEN }}       
+        tags: "s-${{steps.image-tag.outputs.tag}}"
         
-    #- name: Create Pull Request
-      #uses: repo-sync/pull-request@v2
-      #if: ${{!github.event.pull_request}}
-     # id: open-pr
-      #with:
-       # destination_branch: "stage"
-       # source_branch: "dev"
+    - name: Create Pull Request
+      uses: repo-sync/pull-request@v2
+      id: open-pr
+      with:
+        destination_branch: "stage"
+        source_branch: "dev"
         #pr_title: "Pulling ${{ github.ref }} into stage"
-        #github_token: ${{ secrets.GIT_TOKEN }}
+        github_token: ${{ secrets.GIT_TOKEN }}
         
-    #- name: output-url
-    #  run: echo ${{steps.open-pr.outputs.pr_url}}
-    #- name: output-number
-    #  run: echo ${{steps.open-pr.outputs.pr_number}}
-    #- name: output-has-changed-files
-    #  run: echo ${{steps.open-pr.outputs.has_changed_files}}
+    - name: output-url
+      run: echo ${{steps.open-pr.outputs.pr_url}}
+    - name: output-number
+      run: echo ${{steps.open-pr.outputs.pr_number}}
+    - name: output-has-changed-files
+      run: echo ${{steps.open-pr.outputs.has_changed_files}}
         
         
       
-    #- name: stage-pr-merge
-    #  if: github.event.pull_request.merged == 'true' && ${{ github.ref == 'refs/heads/stage' }}
-    #  uses: rtCamp/action-slack-notify@v2
-    #  with:
-    #    status: "stage-pr-merged"
-    #  env:
-    #    SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-    #    SLACK_CHANNEL: devops
-    #- name: master-pr-merge
-    #  if: github.event.pull_request.merged == 'true' && ${{github.ref == 'refs/heads/master'}}
-    #  uses: rtCamp/action-slack-notify@v2
-    #  with:
-    #    status: "master-pr-merged"
-    #  env:
-    #    SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-    #    SLACK_CHANNEL: devops
+    - name: stage-pr-merge
+      if: github.event.pull_request.merged == 'true' && ${{ github.ref == 'refs/heads/stage' }}
+      uses: rtCamp/action-slack-notify@v2
+      with:
+        status: "stage-pr-merged"
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_CHANNEL: devops
+    - name: master-pr-merge
+      if: github.event.pull_request.merged == 'true' && ${{github.ref == 'refs/heads/master'}}
+      uses: rtCamp/action-slack-notify@v2
+      with:
+        status: "master-pr-merged"
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_CHANNEL: devops
       
     #- name: Sending Slack Notification
      # uses: rtCamp/action-slack-notify@v2
