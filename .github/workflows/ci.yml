@@ -58,6 +58,7 @@ jobs:
         
     - name: Create Pull Request
       uses: repo-sync/pull-request@v2
+      if: ${{!github.event.pull_request}}
       id: open-pr
       with:
         destination_branch: "stage"
@@ -65,12 +66,12 @@ jobs:
         #pr_title: "Pulling ${{ github.ref }} into stage"
         github_token: ${{ secrets.GIT_TOKEN }}
         
-    - name: output-url
-      run: echo ${{steps.open-pr.outputs.pr_url}}
-    - name: output-number
-      run: echo ${{steps.open-pr.outputs.pr_number}}
-    - name: output-has-changed-files
-      run: echo ${{steps.open-pr.outputs.has_changed_files}}
+    #- name: output-url
+    #  run: echo ${{steps.open-pr.outputs.pr_url}}
+    #- name: output-number
+    #  run: echo ${{steps.open-pr.outputs.pr_number}}
+    #- name: output-has-changed-files
+    #  run: echo ${{steps.open-pr.outputs.has_changed_files}}
         
         
       
