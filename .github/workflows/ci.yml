@@ -8,6 +8,11 @@ on:
     - master
     - dev
     - stage
+  #pull_request:
+  #  branches:
+  #  - dev
+  #  - stage
+    
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -50,8 +55,27 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_TOKEN }}       
         tags: "s-${{steps.image-tag.outputs.tag}}"
+        
+    - name: Create Pull Request
+      uses: repo-sync/pull-request@v2
+      id: open-pr
+      with:
+        destination_branch: "stage"
+        source_branch: "dev"
+        #pr_title: "Pulling ${{ github.ref }} into stage"
+        github_token: ${{ secrets.GIT_TOKEN }}
+        
+    - name: output-url
+      run: echo ${{steps.open-pr.outputs.pr_url}}
+    - name: output-number
+      run: echo ${{steps.open-pr.outputs.pr_number}}
+    - name: output-has-changed-files
+      run: echo ${{steps.open-pr.outputs.has_changed_files}}
+        
+        
+      
     - name: stage-pr-merge
-      if: github.event.pull_request.merged == 'true' && github.ref == 'refs/heads/stage'
+      if: github.event.pull_request.merged == 'true' && ${{ github.ref == 'refs/heads/stage' }}
       uses: rtCamp/action-slack-notify@v2
       with:
         status: "stage-pr-merged"
@@ -59,7 +83,7 @@ jobs:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         SLACK_CHANNEL: devops
     - name: master-pr-merge
-      if: github.event.pull_request.merged == 'true' && github.ref == 'refs/heads/master'
+      if: github.event.pull_request.merged == 'true' && ${{github.ref == 'refs/heads/master'}}
       uses: rtCamp/action-slack-notify@v2
       with:
         status: "master-pr-merged"
