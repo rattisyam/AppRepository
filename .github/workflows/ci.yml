@@ -39,7 +39,7 @@ jobs:
          registry: onboard.azurecr.io
          username: ${{ secrets.ACR_USERNAME }}
          password: ${{ secrets.ACR_TOKEN }}       
-         tags: "${{job1.steps.image-tag.outputs.tag}}"
+         tags: "${{steps.image-tag.outputs.tag}}"
   job3:
      runs-on: ubuntu-latest
      steps:
@@ -51,7 +51,7 @@ jobs:
          registry: onboard.azurecr.io
          username: ${{ secrets.ACR_USERNAME }}
          password: ${{ secrets.ACR_TOKEN }}       
-         tags: "d-${{job1.steps.image-tag.outputs.tag}}"
+         tags: "d-${{steps.image-tag.outputs.tag}}"
    # - name: stage - build and push docker image
     #  if: ${{ github.ref == 'refs/heads/stage' }}
      # uses: elgohr/Publish-Docker-Github-Action@master      
