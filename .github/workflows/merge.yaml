@@ -26,10 +26,11 @@ jobs:
     - name: Install dependencies
       run: |
         wget https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64.tar.gz -O - | tar xz 
-        mv yq_linux_amd64 /usr/bin/yq
+        mv yq_linux_amd64 yq
+        chmod +x yq
     - name: Update values.staging.yaml
       run: |
-        yq e '.image.tag = \"s-${{steps.image-tag.outputs.tag}}\"" -i nodejs/values.staging.yaml
+        ./yq e '.image.tag = \"s-${{steps.image-tag.outputs.tag}}\"" -i nodejs/values.staging.yaml
         git commit -am "Updated values.staging.yaml"
         git push origin master
 
