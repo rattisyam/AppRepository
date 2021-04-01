@@ -25,8 +25,7 @@ jobs:
         ref: 'master'
     - name: Install dependencies
       run: |
-        wget https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64.tar.gz
-        tar xz yq_linux_amd64.tar.gz 
+        wget https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64.tar.gz -O - | tar xz 
         mv yq_linux_amd64 /usr/bin/yq
     - name: Update values.staging.yaml
       run: |
