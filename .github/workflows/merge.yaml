@@ -4,8 +4,8 @@
 name: Merge Notification
 on:
   pull_request:
-    #types: 
-    #- all
+    types: 
+    - edited
     branches:
     - dev
     - stage
