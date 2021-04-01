@@ -10,7 +10,7 @@ on:
   
 jobs:
   New_PR:
-    if: ${{github.event.pull_request.action == "opened" }}
+    if: ${{github.event.action == 'opened' }}
     runs-on: ubuntu-latest
     steps:
     - name: Slack Notification        
@@ -25,7 +25,7 @@ jobs:
         SLACK_MESSAGE: 'PR #${{github.event.pull_request.pull_number}} Branch ${{ github.event.pull_request.base }}'
         SLACK_FOOTER: 'Hexaware GitOps platform'
   Closed_PR:
-    if: ${{github.event.pull_request.action == "closed" }}
+    if: ${{github.event.action == 'closed' }}
     runs-on: ubuntu-latest
     steps:
     - name: Slack Notification        
