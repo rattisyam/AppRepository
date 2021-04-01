@@ -19,7 +19,7 @@ jobs:
         ref: 'master'
     - name: Update values.staging.yaml
       run: |
-        echo ls
+        ls
 
   close_job:
     if: github.event.pull_request.merged == false
