@@ -21,9 +21,9 @@ jobs:
       env:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         SLACK_CHANNEL: devops
-        SLACK_COLOR: 'yellow'
+        SLACK_COLOR: '#F4D03F'
         SLACK_TITLE: 'New Pull Request'
-        SLACK_MESSAGE: 'PR #${{github.event.pull_request.pull_number}} Branch ${{ github.event.pull_request.base }}'
+        SLACK_MESSAGE: 'PR #${{github.event.pull_request.number}} Branch ${{ github.event.pull_request.base.ref }}'
         SLACK_FOOTER: 'Hexaware GitOps platform'
        
       
