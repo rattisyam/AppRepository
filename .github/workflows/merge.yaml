@@ -12,10 +12,11 @@ jobs:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'stage'
     runs-on: ubuntu-latest
     steps:
-    - name: Update values.staging.yaml
+    - name: Clone Gitops repository
       uses: actions/checkout@v2
       with:
         respository: 'https://github.com/rattisyam/GitOpsRepo.git'
+    - name: Update values.staging.yaml
       run: |
         echo ls
 
