@@ -12,6 +12,7 @@ on:
   #  branches:
   #  - dev
   #  - stage
+  # - test
     
 jobs:
   build:
@@ -29,7 +30,7 @@ jobs:
       run: |
         echo "::set-output name=tag::$(git rev-parse --short HEAD)"
     - name: master - build and push docker image
-      if: ${{ github.ref == 'refs/heads/master' }}
+      if: ${{ github.ref == 'refs/heads/master' }} & github.event.pull_request.merged == 'false'
       uses: elgohr/Publish-Docker-Github-Action@master      
       with:
         name: onboard.azurecr.io/gitopsnjs
@@ -47,6 +48,15 @@ jobs:
         source_branch: "master"
         #pr_title: "Pulling ${{ github.ref }} into stage"
         github_token: ${{ secrets.GIT_TOKEN }}
+    - name: Slack Notification
+      if: ${{ success() }}
+      uses: rtCamp/action-slack-notify@v2
+      #with:
+        #status: ${{ job.status }}
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_CHANNEL: devops
+      
         
     - name: dev - build and push docker image
       if: ${{ github.ref == 'refs/heads/dev' }}
@@ -57,6 +67,7 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_TOKEN }}       
         tags: "d-${{steps.image-tag.outputs.tag}}"
+        
     - name: stage - build and push docker image
       if: ${{ github.ref == 'refs/heads/stage' }}
       uses: elgohr/Publish-Docker-Github-Action@master      
@@ -102,11 +113,4 @@ jobs:
        # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         #SLACK_CHANNEL: devops
       
-    #- name: Sending Slack Notification
-     # uses: rtCamp/action-slack-notify@v2
-      #with:
-        #status: ${{ job.status }}
-      #env:
-        #SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        #SLACK_CHANNEL: devops
-      #if: always()
+   
