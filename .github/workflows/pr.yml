@@ -19,10 +19,12 @@ jobs:
       with:
         status: "stage-pr-merged"
       env:
+        SLACK_USERNAME: 'GitOpsBot'
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_ICON: 'https://gitopslogo.s3.ap-south-1.amazonaws.com/hexaware.png'
         SLACK_CHANNEL: devops
         SLACK_COLOR: '#F4D03F'
-        SLACK_TITLE: 'New Pull Request'
+        SLACK_TITLE: 'New Pull Request by user ${{github.event.pull_request.base.user.login}}'
         SLACK_MESSAGE: 'PR #${{github.event.pull_request.number}} Branch ${{ github.event.pull_request.base.ref }}'
         SLACK_FOOTER: 'Hexaware GitOps platform'
        
