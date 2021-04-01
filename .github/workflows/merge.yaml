@@ -1,31 +1,26 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+name: Close Pull Request
 
-name: Merge Notification
+# only trigger on pull request closed events
 on:
   pull_request:
-    #types: 
-    #- edited
+    types: [ closed ]
     branches:
     - dev
     - stage
-  
+
 jobs:
-  notify:  
+  merge_job:
+    # this job will only run if the PR has been merged
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    if: ${{github.event.pull_request.merged == 'true'}}
     steps:
-    - name: Slack Notification        
-      uses: rtCamp/action-slack-notify@v2
-      with:
-        status: "stage-pr-merged"
-      env:
-        SLACK_USERNAME: 'GitOpsBot'
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        SLACK_ICON: 'https://gitopslogo.s3.ap-south-1.amazonaws.com/hexaware.jpg'
-        SLACK_CHANNEL: devops
-        SLACK_COLOR: '#5DADE2'
-        SLACK_TITLE: 'PR Merged by user ${{github.event.pull_request.base.user.login}}'
-        #SLACK_MESSAGE: 'PR #${{github.event.pull_request.number}} Branch ${{ github.event.pull_request.base.ref }}'
-        SLACK_FOOTER: 'Hexaware GitOps platform'  
-   
+    - run: |
+        echo PR #${{ github.event.number }} has been merged
+
+  close_job:
+    # this job will only run if the PR has been closed without being merged
+    if: github.event.pull_request.merged == false
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo PR #${{ github.event.number }} has been closed without being merged
