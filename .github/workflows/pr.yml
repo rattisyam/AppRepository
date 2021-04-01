@@ -21,7 +21,7 @@ jobs:
       env:
         SLACK_USERNAME: 'GitOpsBot'
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        SLACK_ICON: 'https://gitopslogo.s3.ap-south-1.amazonaws.com/hexaware.png'
+        SLACK_ICON: 'https://gitopslogo.s3.ap-south-1.amazonaws.com/hexaware.jpg'
         SLACK_CHANNEL: devops
         SLACK_COLOR: '#F4D03F'
         SLACK_TITLE: 'New Pull Request by user ${{github.event.pull_request.base.user.login}}'
