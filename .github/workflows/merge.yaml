@@ -12,14 +12,26 @@ jobs:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'stage'
     runs-on: ubuntu-latest
     steps:
+    - name: Clone Application repository    
+      uses: actions/checkout@v2
+    - name: Get Image tags
+      id: image-tag
+      run: |
+        echo "::set-output name=tag::$(git rev-parse --short HEAD)"
     - name: Clone Gitops repository
       uses: actions/checkout@v2
       with:
         repository: 'rattisyam/GitOpsRepo'
         ref: 'master'
+    - name: Install dependencies
+      run: |
+        wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}.tar.gz
+        tar xz && mv ${BINARY} /usr/bin/yq
     - name: Update values.staging.yaml
       run: |
-        ls
+        yq e '.image.tag = \"s-${{steps.image-tag.outputs.tag}}\"" -i nodejs/values.staging.yaml
+        git commit -am "Updated values.staging.yaml"
+        git push origin master
 
   close_job:
     if: github.event.pull_request.merged == false
