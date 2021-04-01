@@ -1,24 +1,26 @@
-name: Close Pull Request
-
-# only trigger on pull request closed events
+name: Update GitOps Repo on PR Merge
 on:
   pull_request:
-    types: [ closed ]
+    types:
+    - closed
     branches:
-    - dev
+    - master
     - stage
 
 jobs:
-  merge_job:
-    # this job will only run if the PR has been merged
-    if: github.event.pull_request.merged == true
+  stage_merge_job:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'stage'
     runs-on: ubuntu-latest
     steps:
-    - run: |
-        echo PR #${{ github.event.number }} has been merged
+    - name: Clone Gitops repository
+      uses: actions/checkout@v2
+      with:
+        respository: 'https://github.com/rattisyam/GitOpsRepo.git'
+    - name: Update values.staging.yaml
+      run: |
+        echo ls
 
   close_job:
-    # this job will only run if the PR has been closed without being merged
     if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     steps:
