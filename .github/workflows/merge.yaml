@@ -30,7 +30,7 @@ jobs:
         chmod +x yq
     - name: Update values.staging.yaml
       run: |
-        ./yq e '.image.tag = \"s-${{steps.image-tag.outputs.tag}}\"" -i nodejs/values.staging.yaml
+        ./yq e '.image.tag = \"s-${{steps.image-tag.outputs.tag}}\"' -i nodejs/values.staging.yaml
         git commit -am "Updated values.staging.yaml"
         git push origin master
 
