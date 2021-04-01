@@ -15,7 +15,7 @@ jobs:
     - name: Clone Gitops repository
       uses: actions/checkout@v2
       with:
-        respository: 'https://github.com/rattisyam/GitOpsRepo.git'
+        repository: 'https://github.com/rattisyam/GitOpsRepo.git'
     - name: Update values.staging.yaml
       run: |
         echo ls
