@@ -4,13 +4,14 @@
 name: PR Notification
 on:
   pull_request:
+    types: 
+    - opened
     branches:
     - dev
     - stage
   
 jobs:
-  New_PR:
-    if: ${{github.event.action == 'opened' }}
+  notify:  
     runs-on: ubuntu-latest
     steps:
     - name: Slack Notification        
@@ -24,22 +25,7 @@ jobs:
         SLACK_TITLE: 'New Pull Request'
         SLACK_MESSAGE: 'PR #${{github.event.pull_request.pull_number}} Branch ${{ github.event.pull_request.base }}'
         SLACK_FOOTER: 'Hexaware GitOps platform'
-  Closed_PR:
-    if: ${{github.event.action == 'closed' }}
-    runs-on: ubuntu-latest
-    steps:
-    - name: Slack Notification        
-      uses: rtCamp/action-slack-notify@v2
-      with:
-        status: "stage-pr-merged"
-      env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        SLACK_CHANNEL: devops
-        SLACK_COLOR: 'yellow'
-        SLACK_TITLE: 'Closed Pull Request'
-        SLACK_MESSAGE: 'PR #${{github.event.pull_request.pull_number}} Branch ${{ github.event.pull_request.base }}'
-        SLACK_FOOTER: 'Hexaware GitOps platform'
-        
+       
       
    # - name: stage-pr-merge
     #  if: github.event.pull_request.merged == 'true' && ${{ github.ref == 'refs/heads/stage' }}
