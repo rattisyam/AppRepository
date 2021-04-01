@@ -47,6 +47,15 @@ jobs:
         source_branch: "master"
         #pr_title: "Pulling ${{ github.ref }} into stage"
         github_token: ${{ secrets.GIT_TOKEN }}
+    - name: Slack Notification
+      if: ${{ success() }}
+      uses: rtCamp/action-slack-notify@v2
+      #with:
+        #status: ${{ job.status }}
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_CHANNEL: devops
+      
         
     - name: dev - build and push docker image
       if: ${{ github.ref == 'refs/heads/dev' }}
@@ -57,6 +66,7 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_TOKEN }}       
         tags: "d-${{steps.image-tag.outputs.tag}}"
+        
     - name: stage - build and push docker image
       if: ${{ github.ref == 'refs/heads/stage' }}
       uses: elgohr/Publish-Docker-Github-Action@master      
@@ -102,11 +112,4 @@ jobs:
        # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         #SLACK_CHANNEL: devops
       
-    #- name: Sending Slack Notification
-     # uses: rtCamp/action-slack-notify@v2
-      #with:
-        #status: ${{ job.status }}
-      #env:
-        #SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        #SLACK_CHANNEL: devops
-      #if: always()
+   
