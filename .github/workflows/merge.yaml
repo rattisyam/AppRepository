@@ -35,7 +35,7 @@ jobs:
     - name: Update values.${{github.event.pull_request.base.ref}}.yaml
       id: update-values
       run: |
-        ./yq e '.image.tag = "s-${{steps.b.outputs.tag}}"' -i nodejs/values.${{github.event.pull_request.base.ref}}.yaml
+        ./yq e '.image.tag = "s-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.${{github.event.pull_request.base.ref}}.yaml
         git config --global user.email "gitopsbot@hexaware.com"
         git config --global user.name "gitopsbot"
         git commit -am "Updated values.${{github.event.pull_request.base.ref}}.yaml"
