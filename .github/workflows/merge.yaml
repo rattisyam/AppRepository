@@ -9,7 +9,7 @@ on:
 
 jobs:
   stage_merge_job:
-    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'stage'
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - name: Clone Application repository    
@@ -29,12 +29,12 @@ jobs:
         wget https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64.tar.gz -O - | tar xz 
         mv yq_linux_amd64 yq
         chmod +x yq
-    - name: Update values.staging.yaml
+    - name: Update values.${{github.event.pull_request.base.ref}}.yaml
       run: |
-        ./yq e '.image.tag = "s-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.staging.yaml
+        ./yq e '.image.tag = "s-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.${{github.event.pull_request.base.ref}}.yaml
         git config --global user.email "gitopsbot@hexaware.com"
         git config --global user.name "gitopsbot"
-        git commit -am "Updated values.staging.yaml"
+        git commit -am "Updated values.${{github.event.pull_request.base.ref}}.yaml"
         git push origin master
 
 
