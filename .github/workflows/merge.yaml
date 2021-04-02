@@ -45,7 +45,7 @@ jobs:
       uses: peter-evans/repository-dispatch@v1
       with:
         token: ${{ secrets.DISPATCH_TOKEN }}
-        repository: 'rattisyam/AppRepository'
+        #repository: 'rattisyam/AppRepository'
         event-type: run-ok
         client-payload: '{"title": "GitOps Repo Update on PR Merge", "msg": "Updated values.${{github.event.pull_request.base.ref}}.yaml for PR Merge: #${{github.event.pull_request.number}}" }'
     - name: Notify on failure
@@ -53,7 +53,7 @@ jobs:
       uses: peter-evans/repository-dispatch@v1
       with:
         token: ${{ secrets.DISPATCH_TOKEN }}
-        repository: 'rattisyam/AppRepository'
+        #repository: 'rattisyam/AppRepository'
         event-type: run-notok
         client-payload: '{"title": "GitOps Repo Update on PR Merge", "msg": "Failed to update values.${{github.event.pull_request.base.ref}}.yaml for PR Merge: #${{github.event.pull_request.number}}" }'
   close_job:
