@@ -14,7 +14,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: |
-        echo ${{github.event}}
+        echo ${{ toJson(github) }}
     - run: npm install
       id: install
       
