@@ -1,0 +1,95 @@
+name: Build Dev branch
+on:
+  push:
+    branches:
+    - dev
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+      id: install
+      
+    - run: npm test
+      id: test
+      
+    - name: Get tag
+      id: image-tag
+      run: |
+        echo "::set-output name=tag::$(git rev-parse --short HEAD)"
+    - name: build and push docker image
+      id: docker
+      uses: elgohr/Publish-Docker-Github-Action@master      
+      with:
+        name: onboard.azurecr.io/gitopsnjs
+        registry: onboard.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_TOKEN }}       
+        tags: "d-${{steps.image-tag.outputs.tag}}"
+        
+    - name: Clone Gitops Repo
+      id: clone-ops
+      uses: actions/checkout@v2
+      with:
+        repository: 'rattisyam/GitOpsRepo'
+        ref: 'master'
+        token: ${{ secrets.GITOPS_TOKEN }}
+    - name: Install dependencies
+      id: install-dep
+      run: |
+        wget https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64.tar.gz -O - | tar xz 
+        mv yq_linux_amd64 yq
+        chmod +x yq
+    - name: Update "values.dev.yaml"
+      id: update-values
+      run: |
+        ./yq e '.image.tag = "d-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.dev.yaml
+        git config --global user.email "gitopsbot@hexaware.com"
+        git config --global user.name "gitopsbot"
+        git commit -am "Updated values.dev.yaml"
+        git push origin master
+        
+    - name: Create Pull Request
+      id: open-pr
+      if: ${{ success() }}
+      uses: repo-sync/pull-request@v2      
+      with:
+        destination_branch: "stage"
+        source_branch: "dev"
+        #pr_title: "Pulling ${{ github.ref }} into stage"
+        github_token: ${{ secrets.GIT_TOKEN }}
+       
+    - name: Notify on success
+      if: steps.install.outcome == 'success' && steps.test.outcome == 'success' && steps.docker.outcome == 'success' && steps.open-pr.outcome == 'success'
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_USERNAME: 'GitOpsBot'
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_ICON: 'https://gitopslogo.s3.ap-south-1.amazonaws.com/hexaware.jpg'
+        SLACK_CHANNEL: devops
+        SLACK_COLOR: '#58D68D'
+        SLACK_TITLE: 'Changes Pushed to Dev'
+        SLACK_MESSAGE: 'Docker image with tage "d-${{steps.image-tag.outputs.tag}}" has been built and pushed to ACR. PR has been created for dev<->stage'
+        SLACK_FOOTER: 'Hexaware GitOps platform'
+        
+    - name: Notify on failure
+      if: steps.install.outcome == 'failure' || steps.test.outcome == 'failure' || steps.docker.outcome == 'failure' || steps.open-pr.outcome == 'failure'
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_USERNAME: 'GitOpsBot'
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_ICON: 'https://gitopslogo.s3.ap-south-1.amazonaws.com/hexaware.jpg'
+        SLACK_CHANNEL: devops
+        SLACK_COLOR: '#EC7063'
+        SLACK_TITLE: 'Changes Not Pushed to Dev'
+        SLACK_MESSAGE: 'Failed to build changes. No PR will be created for dev<->stage'
+        SLACK_FOOTER: 'Hexaware GitOps platform'
+     
+      
+      

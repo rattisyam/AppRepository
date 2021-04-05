@@ -1,0 +1,85 @@
+name: Update GitOps Repo on PR Merge
+on:
+  pull_request:
+    types:
+    - closed
+    branches:
+    - master
+    - stage
+
+jobs:
+  stage_merge_job:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone Application repository
+      id: clone-app    
+      uses: actions/checkout@v2
+    - name: Get Image tags
+      id: image-tag
+      run: |
+        echo "::set-output name=tag::$(git rev-parse --short HEAD)"
+    - name: Clone Gitops repository
+      id: clone-ops
+      uses: actions/checkout@v2
+      with:
+        repository: 'rattisyam/GitOpsRepo'
+        ref: 'master'
+        token: ${{ secrets.GITOPS_TOKEN }}
+
+    - name: Install dependencies
+      id: install-dep
+      run: |
+        wget https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64.tar.gz -O - | tar xz 
+        mv yq_linux_amd64 yq
+        chmod +x yq
+
+    - name: Update values.${{github.event.pull_request.base.ref}}.yaml
+      id: update-values
+      run: |
+        ./yq e '.image.tag = "s-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.${{github.event.pull_request.base.ref}}.yaml
+        git config --global user.email "gitopsbot@hexaware.com"
+        git config --global user.name "gitopsbot"
+        git commit -am "Updated values.${{github.event.pull_request.base.ref}}.yaml"
+        git push origin master
+
+    - name: Create Pull Request
+      if: ${{github.event.pull_request.base.ref == 'stage' }} && ${{ success() }}
+      id: open-pr
+      uses: repo-sync/pull-request@v2      
+      with:
+        destination_branch: "master"
+        source_branch: "stage"
+        #pr_title: "Pulling ${{ github.ref }} into stage"
+        github_token: ${{ secrets.GIT_TOKEN }}
+
+    - name: Notify on success
+      if: steps.clone-app.outcome == 'success' && steps.image-tag.outcome == 'success' && steps.clone-ops.outcome == 'success' && steps.install-dep.outcome == 'success' &&  steps.update-values.outcome == 'success'
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_USERNAME: 'GitOpsBot'
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_ICON: 'https://gitopslogo.s3.ap-south-1.amazonaws.com/hexaware.jpg'
+        SLACK_CHANNEL: devops
+        SLACK_COLOR: '#58D68D'
+        SLACK_TITLE: 'GitOps Repo Update on PR Merge'
+        SLACK_MESSAGE: 'Updated values.${{github.event.pull_request.base.ref}}.yaml for PR Merge: #${{github.event.pull_request.number}}'
+        SLACK_FOOTER: 'Hexaware GitOps platform'
+    - name: Notify on failure
+      if: steps.clone-app.outcome == 'failure' || steps.image-tag.outcome == 'failure' || steps.clone-ops.outcome == 'failure' || steps.install-dep.outcome == 'failure' ||  steps.update-values.outcome == 'failure'
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_USERNAME: 'GitOpsBot'
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_ICON: 'https://gitopslogo.s3.ap-south-1.amazonaws.com/hexaware.jpg'
+        SLACK_CHANNEL: devops
+        SLACK_COLOR: '#EC7063'
+        SLACK_TITLE: 'GitOps Repo Update on PR Merge'
+        SLACK_MESSAGE: 'Failed to update values.${{github.event.pull_request.base.ref}}.yaml for PR Merge: #${{github.event.pull_request.number}}'
+        SLACK_FOOTER: 'Hexaware GitOps platform'
+  close_job:
+    if: github.event.pull_request.merged == false
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo PR #${{ github.event.number }} has been closed without being merged
