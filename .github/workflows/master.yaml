@@ -21,6 +21,7 @@ jobs:
       id: image-tag
       run: |
         echo "::set-output name=tag::$(git rev-parse --short HEAD)"
+
     - name: build and push docker image
       id: docker
       uses: elgohr/Publish-Docker-Github-Action@master      
@@ -31,15 +32,27 @@ jobs:
         password: ${{ secrets.ACR_TOKEN }}       
         tags: "p-${{steps.image-tag.outputs.tag}}"
 
-    - name: Create Pull Request
-      id: open-pr
-      if: ${{ success() }}
-      uses: repo-sync/pull-request@v2      
+    - name: Clone Gitops Repo
+      id: clone-ops
+      uses: actions/checkout@v2
       with:
-        destination_branch: "stage"
-        source_branch: "master"
-        #pr_title: "Pulling ${{ github.ref }} into stage"
-        github_token: ${{ secrets.GIT_TOKEN }}
+        repository: 'rattisyam/GitOpsRepo'
+        ref: 'master'
+        token: ${{ secrets.GITOPS_TOKEN }}
+    - name: Install dependencies
+      id: install-dep
+      run: |
+        wget https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64.tar.gz -O - | tar xz 
+        mv yq_linux_amd64 yq
+        chmod +x yq
+    - name: Update "values.master.yaml"
+      id: update-values
+      run: |
+        ./yq e '.image.tag = "p-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.master.yaml
+        git config --global user.email "gitopsbot@hexaware.com"
+        git config --global user.name "gitopsbot"
+        git commit -am "Updated values.master.yaml"
+        git push origin master
 
     - name: Notify on success
       if: steps.install.outcome == 'success' && steps.test.outcome == 'success' && steps.docker.outcome == 'success'
