@@ -15,6 +15,8 @@ jobs:
     - name: Clone Application repository
       id: clone-app    
       uses: actions/checkout@v2
+    - run: |
+        echo ${{ toJson(github) }}
     - name: Get Image tags
       id: image-tag
       run: |
