@@ -49,7 +49,7 @@ jobs:
     - name: Update "values.stage.yaml"
       id: update-values
       run: |
-        ./yq e '.image.tag = "d-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.stage.yaml
+        ./yq e '.image.tag = "s-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.stage.yaml
         git config --global user.email "gitopsbot@hexaware.com"
         git config --global user.name "gitopsbot"
         git commit -am "Updated values.stage.yaml"
