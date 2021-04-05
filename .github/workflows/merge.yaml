@@ -22,7 +22,7 @@ jobs:
 
     - name: build and push docker image for stage
       if: ${{github.event.pull_request.base.ref == 'stage' }}
-      id: docker
+      id: docker-stage
       uses: elgohr/Publish-Docker-Github-Action@master      
       with:
         name: onboard.azurecr.io/gitopsnjs
@@ -33,7 +33,7 @@ jobs:
 
     - name: build and push docker image for master
       if: ${{github.event.pull_request.base.ref == 'master' }}
-      id: docker
+      id: docker-master
       uses: elgohr/Publish-Docker-Github-Action@master      
       with:
         name: onboard.azurecr.io/gitopsnjs
