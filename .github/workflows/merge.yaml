@@ -26,12 +26,14 @@ jobs:
         repository: 'rattisyam/GitOpsRepo'
         ref: 'master'
         token: ${{ secrets.GITOPS_TOKEN }}
+
     - name: Install dependencies
       id: install-dep
       run: |
         wget https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64.tar.gz -O - | tar xz 
         mv yq_linux_amd64 yq
         chmod +x yq
+
     - name: Update values.${{github.event.pull_request.base.ref}}.yaml
       id: update-values
       run: |
@@ -40,6 +42,17 @@ jobs:
         git config --global user.name "gitopsbot"
         git commit -am "Updated values.${{github.event.pull_request.base.ref}}.yaml"
         git push origin master
+
+    - name: Create Pull Request
+      if: ${{github.event.pull_request.base.ref == 'stage' }} && ${{ success() }}
+      id: open-pr
+      uses: repo-sync/pull-request@v2      
+      with:
+        destination_branch: "master"
+        source_branch: "stage"
+        #pr_title: "Pulling ${{ github.ref }} into stage"
+        github_token: ${{ secrets.GIT_TOKEN }}
+
     - name: Notify on success
       if: steps.clone-app.outcome == 'success' && steps.image-tag.outcome == 'success' && steps.clone-ops.outcome == 'success' && steps.install-dep.outcome == 'success' &&  steps.update-values.outcome == 'success'
       uses: rtCamp/action-slack-notify@v2

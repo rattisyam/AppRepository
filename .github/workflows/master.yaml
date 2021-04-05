@@ -20,6 +20,7 @@ jobs:
       id: image-tag
       run: |
         echo "::set-output name=tag::$(git rev-parse --short HEAD)"
+
     - name: build and push docker image
       id: docker
       uses: elgohr/Publish-Docker-Github-Action@master      
@@ -29,7 +30,17 @@ jobs:
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_TOKEN }}       
         tags: "p-${{steps.image-tag.outputs.tag}}"
-  
+
+    - name: Create Pull Request
+      id: open-pr
+      if: ${{ success() }}
+      uses: repo-sync/pull-request@v2      
+      with:
+        destination_branch: "stage"
+        source_branch: "master"
+        #pr_title: "Pulling ${{ github.ref }} into stage"
+        github_token: ${{ secrets.GIT_TOKEN }}
+
     - name: Notify on success
       if: steps.install.outcome == 'success' && steps.test.outcome == 'success' && steps.docker.outcome == 'success'
       uses: rtCamp/action-slack-notify@v2
@@ -42,6 +53,7 @@ jobs:
         SLACK_TITLE: 'Changes Pushed to Production'
         SLACK_MESSAGE: 'Docker image with tag "p-${{steps.image-tag.outputs.tag}}" has been built and pushed to ACR.'
         SLACK_FOOTER: 'Hexaware GitOps platform'
+
     - name: Notify on failure
       if: steps.install.outcome == 'failure' || steps.test.outcome == 'failure' || steps.docker.outcome == 'failure'
       uses: rtCamp/action-slack-notify@v2
@@ -51,6 +63,6 @@ jobs:
         SLACK_ICON: 'https://gitopslogo.s3.ap-south-1.amazonaws.com/hexaware.jpg'
         SLACK_CHANNEL: devops
         SLACK_COLOR: '#EC7063'
-        SLACK_TITLE: 'Changes Not Pushed to Prod'
+        SLACK_TITLE: 'Changes Not Pushed to Production'
         SLACK_MESSAGE: 'Failed to build changes'
         SLACK_FOOTER: 'Hexaware GitOps platform'
