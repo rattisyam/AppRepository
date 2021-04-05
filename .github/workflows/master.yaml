@@ -21,7 +21,6 @@ jobs:
       id: image-tag
       run: |
         echo "::set-output name=tag::$(git rev-parse --short HEAD)"
-
     - name: build and push docker image
       id: docker
       uses: elgohr/Publish-Docker-Github-Action@master      
@@ -54,7 +53,6 @@ jobs:
         SLACK_TITLE: 'Changes Pushed to Production'
         SLACK_MESSAGE: 'Docker image with tag "p-${{steps.image-tag.outputs.tag}}" has been built and pushed to ACR.'
         SLACK_FOOTER: 'Hexaware GitOps platform'
-
     - name: Notify on failure
       if: steps.install.outcome == 'failure' || steps.test.outcome == 'failure' || steps.docker.outcome == 'failure'
       uses: rtCamp/action-slack-notify@v2
