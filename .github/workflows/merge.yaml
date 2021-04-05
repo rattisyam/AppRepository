@@ -58,13 +58,25 @@ jobs:
         chmod +x yq
 
     - name: Update values.${{github.event.pull_request.base.ref}}.yaml
-      id: update-values
+      if: ${{github.event.pull_request.base.ref == 'stage' }}
+      id: update-values-stage
       run: |
         ./yq e '.image.tag = "s-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.${{github.event.pull_request.base.ref}}.yaml
         git config --global user.email "gitopsbot@hexaware.com"
         git config --global user.name "gitopsbot"
         git commit -am "Updated values.${{github.event.pull_request.base.ref}}.yaml"
         git push origin master
+    
+    - name: Update values.${{github.event.pull_request.base.ref}}.yaml
+      if: ${{github.event.pull_request.base.ref == 'master' }}
+      id: update-values-master
+      run: |
+        ./yq e '.image.tag = "p-${{steps.image-tag.outputs.tag}}"' -i nodejs/values.${{github.event.pull_request.base.ref}}.yaml
+        git config --global user.email "gitopsbot@hexaware.com"
+        git config --global user.name "gitopsbot"
+        git commit -am "Updated values.${{github.event.pull_request.base.ref}}.yaml"
+        git push origin master
+    
 
     - name: Create Pull Request
       if: ${{github.event.pull_request.base.ref == 'stage' }} && ${{ success() }}
