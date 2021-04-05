@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{github.event.head_commit.commiter.username != 'web-flow' }}
+    if: ${{github.event.head_commit.committer.username != 'web-flow' }}
     steps:
     - uses: actions/checkout@v2      
     - name: Use Node.js ${{ matrix.node-version }}
