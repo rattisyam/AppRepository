@@ -4,10 +4,10 @@ var express = require('express');
 var app = express();
 
 app.set('view engine','pug');
-app.set('views','./views');
+app.set('views','/app/views');
 
 app.use(express.static('./public'));
-app.use(require('./routers/index'));
+app.use(require('/app/routers/index'));
 
 app.listen(process.env.PORT || 80, function functionName() {
   console.log("Listening...");
