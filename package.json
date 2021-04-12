@@ -1,13 +1,14 @@
 {
-  "name": "myapp",
-  "private": true,
-  "version": "0.0.2",
+  "name": "gitops",
+  "version": "1.0.0",
   "description": "Node.js Hello World app on Debian using docker",
-  "author": "Tomas Barton <tomas.barton@fit.cvut.cz>",
+  "author": "Arun Prasad",
+  "main": "server.js",
   "dependencies": {
-    "express": "4.16.1"
+    "express": "4.16.1",
+    "pug": "^2.0.1"
   },
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node server.js"
   }
 }
