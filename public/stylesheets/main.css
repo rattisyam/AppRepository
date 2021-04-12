@@ -1,7 +1,46 @@
 body {
-  background: url('../images/bg_pug.jpg') no-repeat center center fixed;
+  background: url('../images/abstract-geometric-shape.jpg') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
   -o-background-size: cover;
+}
+
+.transparent{
+  z-index: 0;
+}
+
+
+.logo-text {
+  font-weight: bold;
+  font-size: 1.2em;
+ 
+}
+
+.data-text {
+  font-weight: bold;
+  font-size: 2.5em; 
+  margin-bottom: 0px;
+}
+
+.data-value { 
+  font-weight: bold;
+  font-style: italic;
+  color: #E67E22;
+  font-size: 2.5em; 
+  margin-bottom: 0px;
+}
+
+#footer{
+  position:fixed;
+  bottom: 0px;
+}
+
+.tools{
+  margin-top: 120px;
+}
+
+.h-text{
+  font-size: 1em;
+  font-weight:bold;
 }

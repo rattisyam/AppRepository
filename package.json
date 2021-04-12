@@ -1,5 +1,5 @@
 {
-  "name": "gitops", 
+  "name": "gitops",
   "version": "1.0.0",
   "description": "Node.js Hello World app on Debian using docker",
   "author": "Arun Prasad",
