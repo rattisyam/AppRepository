@@ -1,14 +1,14 @@
+console.log("Application starting...");
 var express = require('express');
 
-// Constants
-var DEFAULT_PORT = 80;
-var PORT = process.env.PORT || DEFAULT_PORT;
-
-// App
 var app = express();
-app.get('/', function (req, res) {
-  res.send('Current application version is: 3\n');
-});
 
-app.listen(PORT)
-console.log('Running on http://localhost:' + PORT);
+app.set('view engine','pug');
+app.set('views','./views');
+
+app.use(express.static('./public'));
+app.use(require('./routers/index'));
+
+app.listen(process.env.PORT || 80, function functionName() {
+  console.log("Listening...");
+})
