@@ -4,37 +4,40 @@ body {
   -moz-background-size: cover;
   background-size: cover;
   -o-background-size: cover;
+  
 }
 
 .transparent{
   z-index: 0;
 }
 
+.nav-item{
+  font-family: 'Rubik', sans-serif;
+  font-weight: bold;
+}
 
 .logo-text {
   font-weight: bold;
   font-size: 1.2em;
- 
+  font-family: 'Rubik', sans-serif;
 }
 
 .data-text {
   font-weight: bold;
   font-size: 2.5em; 
   margin-bottom: 0px;
+  font-family: 'Rubik', sans-serif;
 }
 
 .data-value { 
   font-weight: bold;
-  font-style: italic;
-  color: #E67E22;
+ 
+  color: #C0392B;
   font-size: 2.5em; 
   margin-bottom: 0px;
+  font-family: 'Rubik', sans-serif;
 }
 
-#footer{
-  position:fixed;
-  bottom: 0px;
-}
 
 .tools{
   margin-top: 120px;
@@ -43,4 +46,5 @@ body {
 .h-text{
   font-size: 1em;
   font-weight:bold;
+  font-family: 'Rubik', sans-serif;
 }
