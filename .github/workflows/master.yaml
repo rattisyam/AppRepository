@@ -24,7 +24,7 @@ jobs:
 
     - name: build and push docker image
       id: docker
-      uses: elgohr/Publish-Docker-Github-Action@master      
+      uses: elgohr/Publish-Docker-Github-Action@v5      
       with:
         name: onboard.azurecr.io/gitopsnjs
         registry: onboard.azurecr.io
